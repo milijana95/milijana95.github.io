@@ -33,7 +33,7 @@ public/images/   Optimised WebP images exported from Figma
 ```
 
 Every route is pre-rendered at build time (`src/entry-server.tsx` + `scripts/prerender.mjs`), so
-GitHub Pages serves real HTML with per-page titles, descriptions and social preview tags; React
+GitHub Pages serves real HTML at https://milijanadesign.com with per-page titles, descriptions and social preview tags; React
 then hydrates it in the browser. Page meta comes from `usePageMeta` in each page component.
 
 Styles are mobile-first CSS Modules; breakpoints are 768px (tablet) and 1024px (desktop).

@@ -15,7 +15,7 @@ for (const { path, heading } of pages) {
       const body = await response.text();
       expect(body).not.toContain('<div id="root"></div>'); // real markup, not an empty shell
       expect(body).toMatch(/<main id="main"[^>]*>.*<h1/s);
-      expect(body).toContain(`<link rel="canonical" href="https://milijana95.github.io${path}" />`);
+      expect(body).toContain(`<link rel="canonical" href="https://milijanadesign.com${path}" />`);
       expect(body).toMatch(/<meta property="og:title" content="[^"]*Milijana Smiljanic[^"]*" \/>/);
     });
 

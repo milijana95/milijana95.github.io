@@ -1,9 +1,13 @@
-import { prerenderPaths, render } from './entry-server';
+import { prerenderPaths, render, siteUrl } from './entry-server';
 import { routes } from './data/routes';
 
 describe('entry-server', () => {
   it('pre-renders every route', () => {
     expect([...prerenderPaths].sort()).toEqual(Object.values(routes).sort());
+  });
+
+  it('uses the custom domain for absolute URLs', () => {
+    expect(siteUrl).toBe('https://milijanadesign.com');
   });
 
   it('renders page markup together with its meta', () => {

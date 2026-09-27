@@ -7,9 +7,8 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const ssrDir = join(root, 'dist-ssr');
-const siteUrl = 'https://milijana95.github.io';
 
-const { render, prerenderPaths } = await import(join(ssrDir, 'entry-server.js'));
+const { render, prerenderPaths, siteUrl } = await import(join(ssrDir, 'entry-server.js'));
 const template = await readFile(join(dist, 'index.html'), 'utf8');
 
 const escapeAttr = (value) =>
