@@ -7,10 +7,14 @@ import { SectionTitle } from '../../components/case-study/SectionTitle/SectionTi
 import { Severity } from '../../components/case-study/Severity/Severity';
 import { SummaryBand } from '../../components/case-study/SummaryBand/SummaryBand';
 import { TeamStructure } from '../../components/case-study/TeamStructure/TeamStructure';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { usePageMeta } from '../../hooks/usePageMeta';
 
 export function MicetroPage() {
-  usePageTitle('Micetro Redesign');
+  usePageMeta({
+    title: 'Micetro Redesign',
+    description:
+      'Turning console superpowers into Micetro Web decisions, so users can switch without compromise.',
+  });
 
   return (
     <CaseStudyLayout>

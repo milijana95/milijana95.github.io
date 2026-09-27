@@ -9,6 +9,27 @@ for (const { path, heading } of pages) {
       await expect(page).toHaveTitle(/Milijana Smiljanic/);
     });
 
+    test('is served as pre-rendered HTML', async ({ request }) => {
+      const response = await request.get(path);
+      expect(response.status()).toBe(200);
+      const body = await response.text();
+      expect(body).not.toContain('<div id="root"></div>'); // real markup, not an empty shell
+      expect(body).toMatch(/<main id="main"[^>]*>.*<h1/s);
+      expect(body).toContain(`<link rel="canonical" href="https://milijana95.github.io${path}" />`);
+      expect(body).toMatch(/<meta property="og:title" content="[^"]*Milijana Smiljanic[^"]*" \/>/);
+    });
+
+    test('hydrates without errors', async ({ page }) => {
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      page.on('console', (message) => {
+        if (message.type() === 'error') errors.push(message.text());
+      });
+      await page.goto(path);
+      await page.waitForLoadState('networkidle');
+      expect(errors).toEqual([]);
+    });
+
     test('has no horizontal scrolling', async ({ page }) => {
       await page.goto(path);
       await page.evaluate(() => document.fonts.ready);

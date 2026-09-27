@@ -7,7 +7,7 @@ Portfolio of Milijana Smiljanic, built from the Figma “Portfolio” design wit
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Start the dev server at http://localhost:5173 |
-| `npm run build` | Type-check and build to `dist/` (also writes `404.html` for client-side routing on GitHub Pages) |
+| `npm run build` | Type-check, build to `dist/` and pre-render every route to static HTML (plus `404.html`, `sitemap.xml`, `robots.txt`) |
 | `npm run preview` | Serve the production build locally |
 | `npm test` | Unit and component tests (Vitest + Testing Library) |
 | `npm run test:e2e` | End-to-end tests (Playwright) at mobile, tablet and desktop sizes |
@@ -31,6 +31,10 @@ src/
 e2e/             Playwright specs
 public/images/   Optimised WebP images exported from Figma
 ```
+
+Every route is pre-rendered at build time (`src/entry-server.tsx` + `scripts/prerender.mjs`), so
+GitHub Pages serves real HTML with per-page titles, descriptions and social preview tags; React
+then hydrates it in the browser. Page meta comes from `usePageMeta` in each page component.
 
 Styles are mobile-first CSS Modules; breakpoints are 768px (tablet) and 1024px (desktop).
 Design tokens (colours, fonts, shadows) live in `src/styles/global.css`.

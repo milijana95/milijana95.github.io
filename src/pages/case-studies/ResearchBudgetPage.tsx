@@ -5,10 +5,14 @@ import { Figure } from '../../components/case-study/Figure/Figure';
 import { MoreStories } from '../../components/case-study/MoreStories/MoreStories';
 import { Prose } from '../../components/case-study/Prose/Prose';
 import { PullQuote } from '../../components/case-study/PullQuote/PullQuote';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { usePageMeta } from '../../hooks/usePageMeta';
 
 export function ResearchBudgetPage() {
-  usePageTitle('Conducting User Research With $0 Budget');
+  usePageMeta({
+    title: 'Conducting User Research With $0 Budget',
+    description:
+      'How I turned $0 budget, into a thriving user research practice by building allies inside my company.',
+  });
 
   return (
     <CaseStudyLayout>

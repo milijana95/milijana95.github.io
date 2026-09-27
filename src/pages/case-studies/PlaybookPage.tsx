@@ -6,7 +6,7 @@ import { MoreStories } from '../../components/case-study/MoreStories/MoreStories
 import { Prose } from '../../components/case-study/Prose/Prose';
 import { PullQuote } from '../../components/case-study/PullQuote/PullQuote';
 import { ReasonList, type Reason } from '../../components/case-study/ReasonList/ReasonList';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { usePageMeta } from '../../hooks/usePageMeta';
 
 const reasons: readonly Reason[] = [
   {
@@ -32,7 +32,11 @@ const reasons: readonly Reason[] = [
 ];
 
 export function PlaybookPage() {
-  usePageTitle('My Practical Playbook for Making Research Stick');
+  usePageMeta({
+    title: 'My Practical Playbook for Making Research Stick',
+    description:
+      'Research doesn’t ship, your process that turns insights into tickets, owners, and release dates does.',
+  });
 
   return (
     <CaseStudyLayout>

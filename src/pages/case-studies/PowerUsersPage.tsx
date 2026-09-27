@@ -5,10 +5,14 @@ import { Figure } from '../../components/case-study/Figure/Figure';
 import { MoreStories } from '../../components/case-study/MoreStories/MoreStories';
 import { Prose } from '../../components/case-study/Prose/Prose';
 import { PullQuote } from '../../components/case-study/PullQuote/PullQuote';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { usePageMeta } from '../../hooks/usePageMeta';
 
 export function PowerUsersPage() {
-  usePageTitle('Stop Building Products Only for Power Users');
+  usePageMeta({
+    title: 'Stop Building Products Only for Power Users',
+    description:
+      'Why listening only to power users can hold your product back - BlueCat Networks Edge Example.',
+  });
 
   return (
     <CaseStudyLayout>

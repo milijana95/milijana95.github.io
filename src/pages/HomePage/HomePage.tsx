@@ -3,10 +3,10 @@ import { Hero } from '../../components/home/Hero/Hero';
 import { Stats } from '../../components/home/Stats/Stats';
 import { featuredWork } from '../../data/featured';
 import { stats } from '../../data/stats';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { usePageMeta } from '../../hooks/usePageMeta';
 
 export function HomePage() {
-  usePageTitle();
+  usePageMeta();
 
   return (
     <>

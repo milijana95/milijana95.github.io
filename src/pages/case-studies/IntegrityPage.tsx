@@ -6,7 +6,7 @@ import { Prose } from '../../components/case-study/Prose/Prose';
 import { SectionTitle } from '../../components/case-study/SectionTitle/SectionTitle';
 import { SummaryBand } from '../../components/case-study/SummaryBand/SummaryBand';
 import { TeamStructure } from '../../components/case-study/TeamStructure/TeamStructure';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { usePageMeta } from '../../hooks/usePageMeta';
 
 const metricColumns: readonly (readonly Metric[])[] = [
   [
@@ -80,7 +80,11 @@ const metricColumns: readonly (readonly Metric[])[] = [
 ];
 
 export function IntegrityPage() {
-  usePageTitle('Integrity X, Beta Users First-Impressions Study');
+  usePageMeta({
+    title: 'Integrity X, Beta Users First-Impressions Study',
+    description:
+      'Beta feedback that validated the redesign, surfaced gaps, and set clear next-iteration priorities.',
+  });
 
   return (
     <CaseStudyLayout>

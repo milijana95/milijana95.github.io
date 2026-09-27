@@ -1,5 +1,8 @@
 export const site = {
   name: 'Milijana Smiljanic',
+  url: 'https://milijana95.github.io',
+  description:
+    'Milijana Smiljanic — UX Researcher & Designer. Great products don’t happen by accident, so I help teams validate faster, waste less, and build with confidence.',
   email: 'milijana95@gmail.com',
   linkedIn: 'https://www.linkedin.com/in/milijana-smiljanic/',
   cvUrl:

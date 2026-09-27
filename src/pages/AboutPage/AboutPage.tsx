@@ -1,10 +1,14 @@
 import { AboutIntro } from '../../components/about/AboutIntro/AboutIntro';
 import { Experience } from '../../components/about/Experience/Experience';
 import { experience } from '../../data/experience';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { usePageMeta } from '../../hooks/usePageMeta';
 
 export function AboutPage() {
-  usePageTitle('About me');
+  usePageMeta({
+    title: 'About me',
+    description:
+      'About Milijana Smiljanic and her work experience in UX research and design at BlueCat Networks, Microsoft and beyond.',
+  });
 
   return (
     <>

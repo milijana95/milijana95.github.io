@@ -7,10 +7,14 @@ import { PullQuote } from '../../components/case-study/PullQuote/PullQuote';
 import { SectionTitle } from '../../components/case-study/SectionTitle/SectionTitle';
 import { SummaryBand } from '../../components/case-study/SummaryBand/SummaryBand';
 import { TeamStructure } from '../../components/case-study/TeamStructure/TeamStructure';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { usePageMeta } from '../../hooks/usePageMeta';
 
 export function EdgePage() {
-  usePageTitle('Edge UX Optimization');
+  usePageMeta({
+    title: 'Edge UX Optimization',
+    description:
+      'Users told us Edge felt complicated. I listened, tested, and shared design recommendations to simplify their journey.',
+  });
 
   return (
     <CaseStudyLayout>
