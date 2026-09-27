@@ -1,0 +1,17 @@
+.heading {
+  font-family: var(--font-geist);
+  font-weight: 500;
+  font-size: 56px;
+  line-height: 1.1;
+  letter-spacing: -1.68px;
+  color: var(--color-black);
+  overflow-wrap: break-word;
+}
+
+.center {
+  text-align: center;
+}
+
+.start {
+  text-align: start;
+}

@@ -1,0 +1,41 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-family: var(--font-inter);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.48px;
+  color: var(--color-black);
+}
+
+.split {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aside {
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .split {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .splitText {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .aside {
+    width: 50%;
+    max-width: 400px;
+  }
+}

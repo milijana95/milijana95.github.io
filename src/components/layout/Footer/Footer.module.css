@@ -1,0 +1,58 @@
+.footer {
+  width: 100%;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 64px var(--gutter);
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* The mobile design shows only the logo and LinkedIn icon. */
+.text {
+  display: none;
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.45;
+  letter-spacing: -0.4px;
+  color: var(--color-black);
+}
+
+.email {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.email:hover {
+  text-decoration: underline;
+}
+
+.social {
+  display: block;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  transition: opacity 150ms ease;
+}
+
+.social:hover {
+  opacity: 0.7;
+}
+
+@media (min-width: 768px) {
+  .text {
+    display: block;
+  }
+}

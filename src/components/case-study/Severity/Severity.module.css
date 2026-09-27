@@ -1,0 +1,15 @@
+.severity {
+  font-weight: 700;
+}
+
+.critical {
+  color: #e00010;
+}
+
+.high {
+  color: #cb4f15;
+}
+
+.medium {
+  color: #cba315;
+}

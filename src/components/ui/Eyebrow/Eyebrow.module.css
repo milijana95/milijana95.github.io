@@ -1,0 +1,16 @@
+.eyebrow {
+  font-family: var(--font-geist);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: 1.44px;
+  text-transform: uppercase;
+}
+
+.default {
+  color: var(--color-black);
+}
+
+.muted {
+  color: var(--color-grey);
+}

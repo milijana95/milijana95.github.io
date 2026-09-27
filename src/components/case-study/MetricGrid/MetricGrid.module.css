@@ -1,0 +1,152 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-family: var(--font-inter);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.48px;
+  color: var(--color-black);
+}
+
+.gallery,
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 32px;
+  overflow: hidden;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.inline {
+  flex-direction: row;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  font-family: var(--font-geist);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.45;
+  letter-spacing: -0.09px;
+}
+
+.pink {
+  background: #fdeaf4;
+  color: #ef3097;
+}
+
+.yellow {
+  background: #fcf7e5;
+  color: #c79b00;
+}
+
+.teal {
+  background: #e5f7f5;
+  color: #009184;
+}
+
+.purple {
+  background: #ede5fc;
+  color: #6733d1;
+}
+
+.green {
+  background: #ecf7e0;
+  color: #4f9400;
+}
+
+.blue {
+  background: #f5f8ff;
+  color: #527ff8;
+}
+
+.red {
+  background: #fde5e5;
+  color: #e00010;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label,
+.listHeading {
+  font-family: var(--font-inter);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.08px;
+  color: var(--color-black);
+}
+
+.listHeading {
+  font-weight: 700;
+}
+
+.note {
+  font-family: var(--font-inter);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: -0.08px;
+  color: var(--color-grey);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .gallery {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .column {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .card {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,19 @@
+.figure img {
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.figure .capped {
+  width: auto;
+  max-width: 100%;
+}
+
+.caption {
+  margin-top: 8px;
+  font-family: var(--font-geist);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--color-grey);
+  text-align: center;
+}

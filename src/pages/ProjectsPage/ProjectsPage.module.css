@@ -1,0 +1,9 @@
+.page {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 80px var(--gutter) 0;
+}
+
+.title {
+  margin-bottom: 120px;
+}
