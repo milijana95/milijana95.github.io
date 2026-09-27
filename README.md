@@ -10,7 +10,7 @@ Portfolio of Milijana Smiljanic, built from the Figma “Portfolio” design wit
 | `npm run build` | Type-check, build to `dist/` and pre-render every route to static HTML (plus `404.html`, `sitemap.xml`, `robots.txt`) |
 | `npm run preview` | Serve the production build locally |
 | `npm test` | Unit and component tests (Vitest + Testing Library) |
-| `npm run test:e2e` | End-to-end tests (Playwright) at mobile, tablet and desktop sizes |
+| `npm run test:e2e` | Build, then run end-to-end tests (Playwright) at mobile, tablet and desktop sizes |
 | `npm run lint` / `npm run typecheck` | ESLint / TypeScript |
 
 Run `npx playwright install chromium` once before the first e2e run.
@@ -41,6 +41,6 @@ Design tokens (colours, fonts, shadows) live in `src/styles/global.css`.
 
 ## Deployment
 
-`.github/workflows/deploy.yml` lints, type-checks, runs unit + e2e tests and, on `main`,
-deploys `dist/` to GitHub Pages. In the repository settings set **Pages → Source** to
+`.github/workflows/deploy.yml` lints, type-checks, runs unit tests, builds once, runs the e2e
+tests against that build and, on `main`, deploys the same `dist/` to GitHub Pages. In the repository settings set **Pages → Source** to
 **GitHub Actions**.

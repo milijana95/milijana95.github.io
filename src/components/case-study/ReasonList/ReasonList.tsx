@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import styles from './ReasonList.module.css';
 
 export type ReasonShape = 'circle' | 'diamond' | 'triangle' | 'square';
@@ -29,9 +30,11 @@ interface ReasonListProps {
 }
 
 export function ReasonList({ title, reasons }: ReasonListProps) {
+  const titleId = useId();
+
   return (
-    <section className={styles.section} aria-labelledby="reasons-title">
-      <h2 id="reasons-title" className={styles.title}>
+    <section className={styles.section} aria-labelledby={titleId}>
+      <h2 id={titleId} className={styles.title}>
         {title}
       </h2>
       <ul className={styles.list}>

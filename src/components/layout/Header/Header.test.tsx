@@ -23,6 +23,9 @@ describe('Header', () => {
     ['/about-me', 'About me'],
     ['/edge', 'Projects'],
     ['/my-practical-playbook-for-making-research-stick', 'Projects'],
+    ['/projects/', 'Projects'],
+    ['/Edge/', 'Projects'],
+    ['/about-me/', 'About me'],
   ])('marks the current section on %s as %s', (route, label) => {
     renderWithRouter(<Header />, { route });
     expect(currentLink()).toHaveTextContent(label);

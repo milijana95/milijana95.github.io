@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { ExperienceEntry } from '../../../data/experience';
 import { site } from '../../../data/site';
 import { Button } from '../../ui/Button/Button';
@@ -9,10 +10,12 @@ interface ExperienceProps {
 }
 
 export function Experience({ entries }: ExperienceProps) {
+  const titleId = useId();
+
   return (
-    <section className={styles.section} aria-labelledby="experience-title">
+    <section className={styles.section} aria-labelledby={titleId}>
       <header className={styles.header}>
-        <h2 id="experience-title" className={styles.title}>
+        <h2 id={titleId} className={styles.title}>
           My Work Experience
         </h2>
         <Button to={site.cvUrl} external>

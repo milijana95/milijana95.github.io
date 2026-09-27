@@ -80,3 +80,38 @@ test('external links open in a new tab', async ({ page }) => {
     'https://www.linkedin.com/in/milijana-smiljanic/',
   );
 });
+
+test.describe('near-miss URLs', () => {
+  for (const [requested, expected, heading] of [
+    ['/projects/', '/projects', 'Projects'],
+    ['/Edge', '/edge', 'Edge UX Optimization'],
+    ['/about-me/?ref=cv#main', '/about-me?ref=cv#main', 'About me'],
+  ] as const) {
+    test(`${requested} redirects to the real page`, async ({ page }) => {
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      page.on('console', (message) => message.type() === 'error' && errors.push(message.text()));
+
+      await page.goto(requested);
+      await expect(page).toHaveURL(expected);
+      await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible();
+      expect(errors).toEqual([]);
+    });
+  }
+});
+
+test('Back returns to the previous scroll position', async ({ page }) => {
+  await page.goto('/projects');
+  const card = page.getByRole('article').filter({ hasText: 'Integrity X' });
+  await card.scrollIntoViewIfNeeded();
+  const before = await page.evaluate(() => window.scrollY);
+  expect(before).toBeGreaterThan(200);
+
+  await card.click();
+  await expect(page).toHaveURL('/integrity');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+
+  await page.goBack();
+  await expect(page).toHaveURL('/projects');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before - 5);
+});

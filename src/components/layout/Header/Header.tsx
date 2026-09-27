@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { projectDetailRoutes, routes } from '../../../data/routes';
+import { matchRoute, routes, routeSections, type NavSection } from '../../../data/routes';
 import { site } from '../../../data/site';
 import { Logo } from '../../ui/Logo/Logo';
 import styles from './Header.module.css';
@@ -8,14 +8,13 @@ import styles from './Header.module.css';
 interface NavItem {
   label: string;
   to: string;
-  /** Extra paths that should also mark this item as current. */
-  alsoActiveOn?: readonly string[];
+  section: NavSection;
 }
 
 const navItems: readonly NavItem[] = [
-  { label: 'Home', to: routes.home },
-  { label: 'Projects', to: routes.projects, alsoActiveOn: projectDetailRoutes },
-  { label: 'About me', to: routes.about },
+  { label: 'Home', to: routes.home, section: 'home' },
+  { label: 'Projects', to: routes.projects, section: 'projects' },
+  { label: 'About me', to: routes.about, section: 'about' },
 ];
 
 export function Header() {
@@ -39,8 +38,8 @@ export function Header() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [menuOpen]);
 
-  const isCurrent = (item: NavItem) =>
-    pathname === item.to || (item.alsoActiveOn?.includes(pathname) ?? false);
+  const route = matchRoute(pathname);
+  const currentSection = route && routeSections[route];
 
   return (
     <header className={styles.header}>
@@ -72,7 +71,7 @@ export function Header() {
         >
           <ul className={styles.navList}>
             {navItems.map((item) => {
-              const current = isCurrent(item);
+              const current = item.section === currentSection;
               return (
                 <li key={item.to}>
                   <Link

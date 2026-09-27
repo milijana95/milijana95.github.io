@@ -8,7 +8,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 const ssrDir = join(root, 'dist-ssr');
 
-const { render, prerenderPaths, siteUrl } = await import(join(ssrDir, 'entry-server.js'));
+const { render, prerenderPaths, notFoundPath, siteUrl } = await import(join(ssrDir, 'entry-server.js'));
 const template = await readFile(join(dist, 'index.html'), 'utf8');
 
 const escapeAttr = (value) =>
@@ -53,7 +53,13 @@ function renderPage(path, { notFound = false } = {}) {
     page = replaceOnce(page, /<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${url}" />`, 'canonical');
     page = replaceOnce(page, /<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${url}" />`, 'og:url');
   }
-  return replaceOnce(page, '<div id="root"></div>', `<div id="root">${html}</div>`, 'root element');
+  // main.tsx only hydrates when this matches the URL being shown.
+  return replaceOnce(
+    page,
+    '<div id="root"></div>',
+    `<div id="root" data-prerendered-path="${escapeAttr(path)}">${html}</div>`,
+    'root element',
+  );
 }
 
 // GitHub Pages serves `/projects` from `projects.html` without a redirect.
@@ -63,7 +69,7 @@ for (const path of prerenderPaths) {
   await writeFile(join(dist, fileFor(path)), renderPage(path));
   console.log(`prerendered ${path} -> ${fileFor(path)}`);
 }
-await writeFile(join(dist, '404.html'), renderPage('/404', { notFound: true }));
+await writeFile(join(dist, '404.html'), renderPage(notFoundPath, { notFound: true }));
 console.log('prerendered 404.html');
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

@@ -1,3 +1,5 @@
+import { useId } from 'react';
+import { SubHeading } from '../SubHeading/SubHeading';
 import styles from './MetricGrid.module.css';
 
 export type MetricTone = 'pink' | 'yellow' | 'teal' | 'purple' | 'green' | 'blue' | 'red';
@@ -65,11 +67,11 @@ interface MetricGridProps {
 }
 
 export function MetricGrid({ title, columns }: MetricGridProps) {
+  const titleId = useId();
+
   return (
-    <section className={styles.section} aria-labelledby="metrics-title">
-      <h3 id="metrics-title" className={styles.title}>
-        {title}
-      </h3>
+    <section className={styles.section} aria-labelledby={titleId}>
+      <SubHeading id={titleId}>{title}</SubHeading>
       <div className={styles.gallery}>
         {columns.map((column, index) => (
           <div key={index} className={styles.column}>

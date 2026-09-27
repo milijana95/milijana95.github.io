@@ -1,6 +1,6 @@
 import { featuredWork } from './featured';
 import { getProject, projects } from './projects';
-import { projectDetailRoutes, routes } from './routes';
+import { routes, routeSections } from './routes';
 
 describe('project data', () => {
   it('has unique ids', () => {
@@ -16,9 +16,12 @@ describe('project data', () => {
     for (const item of featuredWork) expect(known).toContain(item.href);
   });
 
-  it('gives every case study page a project card', () => {
+  it('gives every page in the Projects section (except the list itself) a project card', () => {
     const linked = projects.map((p) => p.href).filter(Boolean);
-    expect([...linked].sort()).toEqual([...projectDetailRoutes].sort());
+    const detailPages = Object.entries(routeSections)
+      .filter(([path, section]) => section === 'projects' && path !== routes.projects)
+      .map(([path]) => path);
+    expect([...linked].sort()).toEqual(detailPages.sort());
   });
 
   it('serves images from the public images folder', () => {

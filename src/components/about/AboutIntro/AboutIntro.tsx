@@ -1,10 +1,13 @@
+import { useId } from 'react';
 import { DisplayHeading } from '../../ui/DisplayHeading/DisplayHeading';
 import styles from './AboutIntro.module.css';
 
 export function AboutIntro() {
+  const titleId = useId();
+
   return (
-    <section className={styles.band} aria-labelledby="about-title">
-      <DisplayHeading id="about-title" className={styles.title}>
+    <section className={styles.band} aria-labelledby={titleId}>
+      <DisplayHeading id={titleId} className={styles.title}>
         About me
       </DisplayHeading>
       <div className={styles.feature}>

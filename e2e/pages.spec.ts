@@ -67,8 +67,12 @@ for (const { path, heading } of pages) {
 }
 
 test('unknown URLs render the not-found page', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => message.type() === 'error' && errors.push(message.text()));
   await page.goto('/this-page-does-not-exist');
   await expect(page.getByRole('heading', { level: 1, name: 'Page not found' })).toBeVisible();
+  expect(errors).toEqual([]);
   await page.getByRole('link', { name: 'Back to home' }).click();
   await expect(page).toHaveURL('/');
 });

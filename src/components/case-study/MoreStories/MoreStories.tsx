@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { getProject, type ProjectId } from '../../../data/projects';
 import { DisplayHeading } from '../../ui/DisplayHeading/DisplayHeading';
 import { ProjectGrid } from '../../ui/ProjectGrid/ProjectGrid';
@@ -8,10 +9,12 @@ interface MoreStoriesProps {
 }
 
 export function MoreStories({ projectIds }: MoreStoriesProps) {
+  const titleId = useId();
+
   return (
-    <section data-bleed aria-labelledby="more-stories-title">
+    <section data-bleed aria-labelledby={titleId}>
       <div className={styles.inner}>
-        <DisplayHeading as="h2" id="more-stories-title">
+        <DisplayHeading as="h2" id={titleId}>
           More stories &amp; insights
         </DisplayHeading>
         <ProjectGrid projects={projectIds.map(getProject)} headingLevel="h3" />

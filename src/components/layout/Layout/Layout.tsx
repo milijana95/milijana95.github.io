@@ -1,15 +1,11 @@
-import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { Footer } from '../Footer/Footer';
 import { Header } from '../Header/Header';
 import styles from './Layout.module.css';
+import { useScrollRestoration } from './useScrollRestoration';
 
 export function Layout() {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+  useScrollRestoration();
 
   return (
     <div className={styles.shell}>

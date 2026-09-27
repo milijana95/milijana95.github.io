@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Eyebrow } from '../../ui/Eyebrow/Eyebrow';
 import { Prose } from '../Prose/Prose';
+import { SubHeading } from '../SubHeading/SubHeading';
 import styles from './ContentBlock.module.css';
 
 interface ContentBlockProps {
@@ -16,7 +17,7 @@ interface ContentBlockProps {
 export function ContentBlock({ title, eyebrow, children, aside }: ContentBlockProps) {
   return (
     <section className={styles.block}>
-      {title && <h3 className={styles.title}>{title}</h3>}
+      {title && <SubHeading>{title}</SubHeading>}
       {eyebrow && <Eyebrow as="h3">{eyebrow}</Eyebrow>}
       {aside ? (
         <div className={styles.split}>

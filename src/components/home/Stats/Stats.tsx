@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { Stat } from '../../../data/stats';
 import styles from './Stats.module.css';
 
@@ -7,9 +8,11 @@ interface StatsProps {
 }
 
 export function Stats({ title, items }: StatsProps) {
+  const titleId = useId();
+
   return (
-    <section className={styles.section} aria-labelledby="stats-title">
-      <h2 id="stats-title" className={styles.title}>
+    <section className={styles.section} aria-labelledby={titleId}>
+      <h2 id={titleId} className={styles.title}>
         {title}
       </h2>
       <ul className={styles.list}>

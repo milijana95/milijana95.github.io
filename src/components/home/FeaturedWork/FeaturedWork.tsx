@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { FeaturedItem } from '../../../data/featured';
 import { Button } from '../../ui/Button/Button';
 import { DisplayHeading } from '../../ui/DisplayHeading/DisplayHeading';
@@ -9,9 +10,11 @@ interface FeaturedWorkProps {
 }
 
 export function FeaturedWork({ items }: FeaturedWorkProps) {
+  const titleId = useId();
+
   return (
-    <section className={styles.section} aria-labelledby="featured-title">
-      <DisplayHeading as="h2" id="featured-title" className={styles.heading}>
+    <section className={styles.section} aria-labelledby={titleId}>
+      <DisplayHeading as="h2" id={titleId} className={styles.heading}>
         Featured Work
       </DisplayHeading>
       <ol className={styles.list}>
