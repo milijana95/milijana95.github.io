@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Čitač skripte</title>
+<meta name="description" content="Nalepite ili učitajte tekst, a čitač će ga pročitati naglas.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/images/icons/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column; script text as the "book page", sticky player bar at bottom */
+:root{
+  --bg:#eef1f3; --page:#ffffff; --ink:#18232b; --muted:#5d6b75; --line:#d5dce1;
+  --accent:#1f6f6a; --accent-ink:#ffffff; --mark:#cfe9e4;
+  --f-read:"Literata", Georgia, "Times New Roman", serif;
+  --f-ui:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11181d; --page:#182229; --ink:#e3e9ec; --muted:#97a6af; --line:#2a3842;
+  --accent:#5fbfb5; --accent-ink:#0d1a19; --mark:#24433f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11181d; --page:#182229; --ink:#e3e9ec; --muted:#97a6af; --line:#2a3842;
+  --accent:#5fbfb5; --accent-ink:#0d1a19; --mark:#24433f; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:0}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding-bottom:150px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--f-read);font-weight:600;font-size:26px;margin:0;text-wrap:balance}
+.sub{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px}
+.tab{font:inherit;font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+textarea{width:100%;min-height:340px;resize:vertical;padding:18px;border:1px solid var(--line);border-radius:10px;background:var(--page);color:var(--ink);font-family:var(--f-read);font-size:17px;line-height:1.65}
+.reader{background:var(--page);border:1px solid var(--line);border-radius:10px;padding:22px 20px;font-family:var(--f-read);font-size:18px;line-height:1.75;min-height:340px}
+.reader p{margin:0 0 1em}
+.s{border-radius:4px;cursor:pointer;transition:background .15s}
+.s:hover{background:color-mix(in srgb,var(--mark) 55%,transparent)}
+.s.on{background:var(--mark)}
+.hint{color:var(--muted);font-size:13px;margin:0}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.settings{grid-template-columns:1fr}}
+label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+select,input[type=range]{font:inherit;font-size:14px;text-transform:none;letter-spacing:0;color:var(--ink)}
+select{padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--page)}
+input[type=range]{accent-color:var(--accent);width:100%}
+.warn{font-size:13px;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--page);color:var(--muted);margin:0}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--page);border-top:1px solid var(--line);
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.bar-in{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.prog{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.ctr{display:flex;align-items:center;gap:10px}
+.btn{font:inherit;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;width:44px;height:44px;display:grid;place-items:center;cursor:pointer;font-size:16px}
+.play{width:56px;height:56px;background:var(--accent);color:var(--accent-ink);border:none;font-size:20px}
+.btn:focus-visible,.tab:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pos{margin-left:auto;min-width:0;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.upload{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border:1px dashed var(--line);border-radius:10px;background:var(--page)}
+.upload.over{border-color:var(--accent);background:var(--mark)}
+.up{font-size:14px;font-weight:600;color:var(--accent-ink);background:var(--accent);padding:9px 14px;border-radius:999px;cursor:pointer;text-transform:none;letter-spacing:0;flex-direction:row}
+.up:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.upinfo{font-size:13px;color:var(--muted);min-width:0;flex:1}
+.upinfo.err{color:#b4412f}
+.chap select{font-size:15px}
+.diag{font-size:13px;color:var(--muted)}
+.diag summary{cursor:pointer}
+.diag pre{white-space:pre-wrap;word-break:break-all;font-size:12px;margin:8px 0 0}
+.vbox{display:flex;flex-direction:column;gap:5px}
+.vlab{font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.vname{font-size:14px;padding:8px 0}
+.reader p.h{font-family:var(--f-ui);font-weight:600;font-size:19px;line-height:1.35;margin:1.6em 0 .6em;color:var(--accent)}
+.reader p.h:first-child{margin-top:0}
+.cur{font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Čitač skripte</h1>
+      <div class="sub">Nalepite tekst, a aplikacija će ga pročitati naglas.</div>
+    </div>
+    <div class="tabs" role="group" aria-label="Prikaz">
+      <button class="tab" id="tabEdit" aria-pressed="false">Tekst</button>
+      <button class="tab" id="tabRead" aria-pressed="true">Slušanje</button>
+    </div>
+  </header>
+
+  <div class="upload" id="drop">
+    <label class="up" for="file">Učitaj skriptu iz fajla</label>
+    <input type="file" id="file" accept=".txt,.docx,.pdf,.md,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+    <span class="upinfo" id="upinfo">Word (.docx), PDF ili .txt. Fajl možete i prevući ovde.</span>
+  </div>
+
+  <label for="chap" id="chapWrap" class="chap" hidden>Poglavlja<select id="chap"></select></label>
+
+  <textarea id="src" hidden aria-label="Tekst skripte"></textarea>
+  <div class="reader" id="reader" aria-live="off"></div>
+  <p class="hint" id="hint">Dodirnite bilo koju rečenicu da čitanje počne od nje.</p>
+
+  <div class="settings">
+    <div class="vbox"><span class="vlab">Glas</span><span class="vname" id="vname">Traži se hrvatski glas…</span></div>
+    <label for="rate">Brzina: <span id="rateV">1.0×</span><input id="rate" type="range" min="0.6" max="1.6" step="0.1" value="1"></label>
+  </div>
+  <p class="warn" id="warn" hidden></p>
+  <details class="diag"><summary>Glasovi koje vidi ova stranica</summary><pre id="vlist">…</pre></details>
+</div>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="prog"><i id="prog"></i></div>
+    <div class="ctr">
+      <button class="btn" id="prev" aria-label="Prethodna rečenica">⏮</button>
+      <button class="btn play" id="play" aria-label="Pusti">▶</button>
+      <button class="btn" id="next" aria-label="Sledeća rečenica">⏭</button>
+      <button class="btn" id="stop" aria-label="Na početak">■</button>
+      <button class="btn" id="toc" aria-label="Poglavlja" hidden>☰</button>
+      <div class="pos"><div class="cur" id="cur"></div><div id="pos">0 / 0</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SAMPLE=`Uvod
+
+Primer skripte. Ovo je kratak uvodni tekst kojim možete isprobati kako aplikacija čita srpski jezik.
+
+Digitalna štampa je postupak u kome se slika prenosi direktno iz računara na podlogu, bez izrade štamparske forme. Zbog toga je pogodna za manje tiraže i personalizovane proizvode.
+
+Kako koristiti čitač
+
+Da biste slušali svoju skriptu, pritisnite dugme „Tekst“ gore desno, obrišite ovaj primer i nalepite svoj tekst. Zatim se vratite na „Slušanje“ i pritisnite dugme za reprodukciju. Svoju skriptu možete i učitati iz fajla.
+
+Poglavlja
+
+Naslovi u skripti se prepoznaju automatski. Iz liste poglavlja možete skočiti na bilo koji deo teksta.`;
+
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const synth=window.speechSynthesis;
+let sents=[],idx=0,playing=false,voices=[],token=0,voice=null,enhanced=false;
+
+// Ćirilica -> latinica (za glasove koji ne čitaju ćirilicu)
+const MAP={а:'a',б:'b',в:'v',г:'g',д:'d',ђ:'đ',е:'e',ж:'ž',з:'z',и:'i',ј:'j',к:'k',л:'l',љ:'lj',м:'m',н:'n',њ:'nj',о:'o',п:'p',р:'r',с:'s',т:'t',ћ:'ć',у:'u',ф:'f',х:'h',ц:'c',ч:'č',џ:'dž',ш:'š'};
+function toLat(t){return t.replace(/[Ѐ-ӿ]/g,ch=>{const l=ch.toLowerCase(),r=MAP[l];if(r===undefined)return ch;return ch===l?r:r.charAt(0).toUpperCase()+r.slice(1)})}
+
+const HEAD_RE=/^(poglavlje|lekcija|glava|deo|dio|tema|predavanje|ve[žz]ba|uvod|zaklju[čc]ak|rezime|literatura|поглавље|лекција|глава|део|тема|предавање|вежба|увод|закључак)\b/i;
+function isHead(t){
+  t=t.trim();
+  if(!t||t.length>90||t.length<3||!/\p{L}{2}/u.test(t))return false;
+  if(HEAD_RE.test(t)&&t.split(/\s+/).length<=12)return true;
+  if(/[.!?…,;:]["»“”)]?$/.test(t))return false;
+  if(t.split(/\s+/).length>8)return false;
+  return /^[\p{Lu}\d]/u.test(t)||/^[IVX]+\.?\s/.test(t);
+}
+let chaps=[];
+function split(text){
+  const out=[];chaps=[];
+  text.split(/\n\s*\n/).forEach((para,pi)=>{
+    const flat=para.replace(/\s+/g,' ').trim();
+    if(isHead(flat)){chaps.push({i:out.length,t:flat});out.push({t:flat,p:pi,h:true});return}
+    const parts=para.replace(/\s+/g,' ').trim().match(/[^.!?…]+[.!?…]+["»“”)]*|[^.!?…]+$/g)||[];
+    parts.forEach(s=>{s=s.trim();if(s)out.push({t:s,p:pi})});
+  });
+  return out;
+}
+function render(){
+  const r=$('reader');r.innerHTML='';
+  if(!sents.length){r.innerHTML='<p style="color:var(--muted)">Nema teksta. Pritisnite „Tekst“ i nalepite skriptu.</p>';updPos();return}
+  let p=null,last=-1;
+  sents.forEach((s,i)=>{
+    if(s.p!==last){p=document.createElement('p');if(s.h)p.className='h';r.appendChild(p);last=s.p}
+    const sp=document.createElement('span');sp.className='s';sp.textContent=s.t+' ';sp.dataset.i=i;
+    sp.onclick=()=>{idx=i;start()};p.appendChild(sp);
+  });
+  buildChaps();
+  mark();
+}
+function buildChaps(){
+  const sel=$('chap');sel.innerHTML='';
+  const show=chaps.length>=2;
+  $('chapWrap').hidden=!show;$('toc').hidden=!show;
+  if(!show)return;
+  chaps.forEach((c,n)=>{const o=document.createElement('option');o.value=n;o.textContent=c.t;sel.appendChild(o)});
+}
+function chapAt(i){let n=-1;for(let k=0;k<chaps.length;k++){if(chaps[k].i<=i)n=k;else break}return n}
+function mark(){
+  document.querySelectorAll('.s.on').forEach(e=>e.classList.remove('on'));
+  const el=document.querySelector('.s[data-i="'+idx+'"]');
+  if(el){el.classList.add('on');if(playing)el.scrollIntoView({block:'center',behavior:'smooth'})}
+  updPos();
+}
+function updPos(){
+  $('pos').textContent=(sents.length?idx+1:0)+' / '+sents.length;
+  const n=chapAt(idx);
+  $('cur').textContent=n>=0&&chaps.length>=2?chaps[n].t:'';
+  if(n>=0&&chaps.length>=2)$('chap').value=n;
+  $('prog').style.width=(sents.length?(idx/sents.length*100):0)+'%';
+  store.set('citac_idx',idx);
+}
+function curVoice(){return voice}
+function speakCurrent(){
+  if(idx>=sents.length){stop(true);return}
+  const my=++token;
+  const v=curVoice();
+  let text=sents[idx].t;
+  if(v&&!/^sr/i.test(v.lang))text=toLat(text);
+  const u=new SpeechSynthesisUtterance(text);
+  if(v){u.voice=v;u.lang=v.lang}else u.lang='sr-RS';
+  u.rate=parseFloat($('rate').value);
+  u.onend=()=>{if(my!==token||!playing)return;idx++;mark();speakCurrent()};
+  u.onerror=e=>{if(my!==token)return;if(e.error!=='interrupted'&&e.error!=='canceled'){playing=false;setBtn()}};
+  mark();synth.speak(u);
+}
+function start(){if(!synth||!voice){checkVoice();return}synth.cancel();playing=true;setBtn();speakCurrent()}
+function pause(){playing=false;token++;if(synth)synth.cancel();setBtn()}
+function stop(end){pause();idx=0;mark()}
+function setBtn(){$('play').textContent=playing?'❚❚':'▶';$('play').setAttribute('aria-label',playing?'Pauza':'Pusti')}
+
+$('play').onclick=()=>playing?pause():start();
+$('next').onclick=()=>{if(idx<sents.length-1){idx++;playing?start():mark()}};
+$('prev').onclick=()=>{if(idx>0){idx--;playing?start():mark()}};
+$('stop').onclick=()=>stop(false);
+$('chap').onchange=e=>{const c=chaps[+e.target.value];if(!c)return;idx=c.i;
+  const el=document.querySelector('.s[data-i="'+idx+'"]');if(el)el.scrollIntoView({block:'start',behavior:'smooth'});
+  playing?start():mark()};
+$('toc').onclick=()=>{if(!$('reader').hidden){$('chapWrap').scrollIntoView({block:'start',behavior:'smooth'});$('chap').focus()}};
+$('rate').oninput=e=>{$('rateV').textContent=parseFloat(e.target.value).toFixed(1)+'×';store.set('citac_rate',e.target.value)};
+$('rate').onchange=()=>{if(playing)start()};
+
+function setMode(edit){
+  if(!edit){const t=$('src').value;store.set('citac_text',t);sents=split(t);if(idx>=sents.length)idx=0;render()}
+  else pause();
+  $('src').hidden=!edit;$('reader').hidden=edit;$('hint').hidden=edit;
+  $('tabEdit').setAttribute('aria-pressed',edit);$('tabRead').setAttribute('aria-pressed',!edit);
+}
+$('tabEdit').onclick=()=>setMode(true);
+$('tabRead').onclick=()=>setMode(false);
+$('src').oninput=()=>{store.set('citac_text',$('src').value);idx=0};
+
+const isEnh=v=>/enhanced|premium|poboljš|napredn|siri/i.test(v.voiceURI+' '+v.name);
+const isCompact=v=>/compact|default/i.test(v.voiceURI);
+function loadVoices(){
+  if(!synth)return;
+  voices=synth.getVoices();
+  if(!voices.length)return;
+  const hr=voices.filter(v=>/^hr/i.test(v.lang));
+  // 1) glas označen kao poboljšan; 2) ako ih ima više, onaj koji nije osnovni (compact)
+  let pick=hr.find(isEnh);
+  if(!pick&&hr.length>1)pick=hr.find(v=>!isCompact(v)&&!v.default)||hr.find(v=>!isCompact(v));
+  voice=pick||null;enhanced=!!pick;
+  $('vlist').textContent=hr.length?hr.map(v=>v.name+' — '+v.voiceURI+(v.localService?'':' (online)')).join('\n'):'Nijedan hrvatski glas nije dostupan ovoj stranici.';
+  checkVoice();
+}
+function checkVoice(){
+  const w=$('warn'),n=$('vname');
+  if(!synth){n.textContent='Nije dostupan';w.hidden=false;w.textContent='Ovaj pregledač ne podržava čitanje naglas.';return}
+  if(voice){n.textContent=voice.name.replace(/\s*\(.*\)\s*$/,'')+' · hrvatski, poboljšan';w.hidden=true;return}
+  n.textContent='Poboljšani hrvatski glas nije pronađen';w.hidden=false;
+  w.textContent='Osnovni glas se ne koristi. Preuzmite glas u Podešavanjima: Pristupačnost › Izgovoreni sadržaj › Glasovi › Hrvatski › Lana (Poboljšan), sačekajte da se preuzimanje završi, pa potpuno zatvorite i ponovo otvorite pregledač.';
+}
+// Učitavanje fajlova
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('load'));document.head.appendChild(s)})}
+async function readDocx(buf){
+  if(!window.mammoth)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
+  const r=await mammoth.extractRawText({arrayBuffer:buf});
+  return r.value.replace(/\n{1}(?!\n)/g,'\n\n');
+}
+async function readPdf(buf){
+  if(!window.pdfjsLib){
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');
+  }
+  const doc=await pdfjsLib.getDocument({data:new Uint8Array(buf),isEvalSupported:false}).promise;
+  const pages=[];
+  for(let n=1;n<=doc.numPages;n++){
+    $('upinfo').textContent='Čitam PDF: strana '+n+' od '+doc.numPages+'…';
+    const c=await (await doc.getPage(n)).getTextContent();
+    let t='';c.items.forEach(it=>{t+=it.str+(it.hasEOL?'\n':'')});
+    pages.push(t);
+  }
+  // spoji prelomljene reči i redove; prazni redovi ostaju pasusi
+  const lines=pages.join('\n\n').replace(/-\n(?=\p{Ll})/gu,'').split('\n');
+  let out='';
+  lines.forEach(l=>{
+    const t=l.trim();
+    if(!t){out+='\n\n';return}
+    if(isHead(t)&&t.length<70)out+='\n\n'+t+'\n\n';
+    else out+=(out&&!out.endsWith('\n')?' ':'')+t;
+  });
+  return out;
+}
+async function handleFile(f){
+  if(!f)return;
+  const info=$('upinfo');info.classList.remove('err');info.textContent='Učitavam „'+f.name+'“…';
+  try{
+    const ext=(f.name.split('.').pop()||'').toLowerCase();
+    let text;
+    if(ext==='docx')text=await readDocx(await f.arrayBuffer());
+    else if(ext==='pdf')text=await readPdf(await f.arrayBuffer());
+    else if(ext==='doc')throw new Error('doc');
+    else text=await f.text();
+    text=text.replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();
+    if(!text)throw new Error('empty');
+    pause();$('src').value=text;store.set('citac_text',text);idx=0;setMode(false);
+    info.textContent='Učitano: „'+f.name+'“ ('+sents.length+' rečenica).';
+  }catch(e){
+    info.classList.add('err');
+    info.textContent=e.message==='doc'?'Stari .doc format nije podržan. Sačuvajte fajl kao .docx ili PDF pa pokušajte ponovo.'
+      :e.message==='empty'?'U fajlu nije pronađen tekst. Ako je PDF skeniran (slika), tekst se ne može izdvojiti.'
+      :'Fajl nije moguće pročitati. Pokušajte sa .docx, PDF ili .txt fajlom.';
+  }
+  $('file').value='';
+}
+$('file').onchange=e=>handleFile(e.target.files[0]);
+const drop=$('drop');
+['dragenter','dragover'].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();if(ev==='drop'||!e.relatedTarget)drop.classList.remove('over')}));
+document.addEventListener('drop',e=>handleFile(e.dataTransfer&&e.dataTransfer.files[0]));
+
+// init
+const savedText=store.get('citac_text');
+$('src').value=savedText&&savedText.trim()?savedText:SAMPLE;
+const r=store.get('citac_rate');if(r){$('rate').value=r;$('rateV').textContent=parseFloat(r).toFixed(1)+'×'}
+sents=split($('src').value);
+idx=Math.min(parseInt(store.get('citac_idx')||'0',10)||0,Math.max(0,sents.length-1));
+render();
+if(synth){loadVoices();synth.onvoiceschanged=loadVoices;setTimeout(loadVoices,800)}else checkVoice();
+</script>
+
+</body>
+</html>
